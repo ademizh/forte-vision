@@ -1,0 +1,288 @@
+{
+ "note": "legacy clean-max calibration",
+ "state_version": "state-min-v3",
+ "classifier_version": "classify-flow-v2",
+ "rule": "strict",
+ "allow_fa": 0,
+ "sources": [
+  "engine",
+  "door",
+  "focus"
+ ],
+ "videos": [
+  "X-1",
+  "X-10",
+  "X-11",
+  "X-12",
+  "X-13",
+  "X-14",
+  "X-15",
+  "X-16",
+  "X-17",
+  "X-18",
+  "X-19",
+  "X-2",
+  "X-20",
+  "X-21",
+  "X-22",
+  "X-23",
+  "X-24",
+  "X-25",
+  "X-26",
+  "X-27",
+  "X-28",
+  "X-29",
+  "X-3",
+  "X-30",
+  "X-31",
+  "X-32",
+  "X-33",
+  "X-34",
+  "X-35",
+  "X-37",
+  "X-38",
+  "X-39",
+  "X-4",
+  "X-40",
+  "X-43",
+  "X-44",
+  "X-45",
+  "X-46",
+  "X-5",
+  "X-8"
+ ],
+ "inference_signature": {
+  "state_version": "state-min-v3",
+  "classifier_version": "classify-flow-v2",
+  "fact_fps": 1.0,
+  "fact_width": 1280,
+  "tile_every": 2,
+  "vlm_max_pixels": 921600,
+  "vlm_quant": "",
+  "cls_frames": 8,
+  "detectors": [
+   "owl"
+  ],
+  "vlm_config": "77d9ec7321cc572e3579e2c84799c9cadaded63c49ce93b101733349fc330c43",
+  "detector_configs": {
+   "owl": "ba9df8c25a4b8461887dd0a93d9252c9cd84697fe8d49a9d8794ce409af9acb2"
+  },
+  "focus": {
+   "version": "focus-states-v1",
+   "full_min": 0.03,
+   "tile_min": 0.05,
+   "candidate_p": 0.15,
+   "state_p": 0.5,
+   "max_windows": 6,
+   "brief_weight": 0.5,
+   "window": 5,
+   "votes": 3,
+   "answer_orders": 3
+  }
+ },
+ "features": {
+  "ch_cash_unattended": {
+   "type": "cash_unattended",
+   "threshold": 0.2,
+   "enabled": false,
+   "source": "chain",
+   "generic": false,
+   "clean_max": 0.148,
+   "own_hits": [],
+   "clean_firing_loo": []
+  },
+  "ch_personal_items_cash_area": {
+   "type": "personal_items_cash_area",
+   "threshold": 0.2332,
+   "enabled": false,
+   "source": "chain",
+   "generic": false,
+   "clean_max": 0.1832,
+   "own_hits": [],
+   "clean_firing_loo": []
+  },
+  "ch_safe_key_unattended": {
+   "type": "safe_key_unattended",
+   "threshold": 0.2324,
+   "enabled": false,
+   "source": "chain",
+   "generic": false,
+   "clean_max": 0.1824,
+   "own_hits": [],
+   "clean_firing_loo": []
+  },
+  "ch_safe_left_open": {
+   "type": "safe_left_open",
+   "threshold": 0.2,
+   "enabled": false,
+   "source": "chain",
+   "generic": false,
+   "clean_max": 0.0524,
+   "own_hits": [],
+   "clean_firing_loo": []
+  },
+  "ch_service_door_left_open": {
+   "type": "service_door_left_open",
+   "threshold": 0.2,
+   "enabled": false,
+   "source": "chain",
+   "generic": false,
+   "clean_max": 0.1487,
+   "own_hits": [],
+   "clean_firing_loo": []
+  },
+  "ch_unlocked_bank_terminal": {
+   "type": "unlocked_bank_terminal",
+   "threshold": 0.2958,
+   "enabled": false,
+   "source": "chain",
+   "generic": false,
+   "clean_max": 0.2458,
+   "own_hits": [],
+   "clean_firing_loo": []
+  },
+  "d_service_door_left_open": {
+   "type": "service_door_left_open",
+   "threshold": 0.3014,
+   "enabled": true,
+   "source": "door",
+   "generic": false,
+   "clean_max": 0.2214,
+   "own_hits": [
+    "X-32",
+    "X-33"
+   ],
+   "clean_firing_loo": []
+  },
+  "e_cash_unattended": {
+   "type": "cash_unattended",
+   "threshold": 0.1322,
+   "enabled": true,
+   "source": "engine",
+   "generic": false,
+   "clean_max": 0.0822,
+   "own_hits": [
+    "X-26"
+   ],
+   "clean_firing_loo": []
+  },
+  "e_coffee_over_cash": {
+   "type": "coffee_over_cash",
+   "threshold": 0.307,
+   "enabled": true,
+   "source": "engine",
+   "generic": false,
+   "clean_max": 0.2571,
+   "own_hits": [
+    "X-46"
+   ],
+   "clean_firing_loo": []
+  },
+  "e_collection_bag_unsecured": {
+   "type": "collection_bag_unsecured",
+   "threshold": 0.1,
+   "enabled": true,
+   "source": "engine",
+   "generic": false,
+   "clean_max": 0.0,
+   "own_hits": [],
+   "clean_firing_loo": []
+  },
+  "e_counting_without_customer": {
+   "type": "counting_without_customer",
+   "threshold": 0.2951,
+   "enabled": true,
+   "source": "engine",
+   "generic": false,
+   "clean_max": 0.2451,
+   "own_hits": [],
+   "clean_firing_loo": []
+  },
+  "e_personal_items_cash_area": {
+   "type": "personal_items_cash_area",
+   "threshold": 0.4075,
+   "enabled": true,
+   "source": "engine",
+   "generic": false,
+   "clean_max": 0.3575,
+   "own_hits": [
+    "X-40"
+   ],
+   "clean_firing_loo": []
+  },
+  "e_previous_cash_on_table": {
+   "type": "previous_cash_on_table",
+   "threshold": 0.1108,
+   "enabled": true,
+   "source": "engine",
+   "generic": false,
+   "clean_max": 0.0608,
+   "own_hits": [
+    "X-4"
+   ],
+   "clean_firing_loo": []
+  },
+  "e_service_door_left_open": {
+   "type": "service_door_left_open",
+   "threshold": 0.8628,
+   "enabled": true,
+   "source": "engine",
+   "generic": false,
+   "clean_max": 0.8128,
+   "own_hits": [],
+   "clean_firing_loo": []
+  },
+  "e_unauthorized_cash_area_entry": {
+   "type": "unauthorized_cash_area_entry",
+   "threshold": 0.1798,
+   "enabled": true,
+   "source": "engine",
+   "generic": false,
+   "clean_max": 0.1298,
+   "own_hits": [
+    "X-30"
+   ],
+   "clean_firing_loo": []
+  },
+  "f_any": {
+   "type": "other",
+   "threshold": 0.6498,
+   "enabled": false,
+   "source": "focus",
+   "generic": true,
+   "clean_max": 0.5998,
+   "own_hits": [],
+   "clean_firing_loo": []
+  },
+  "f_service_door_left_open": {
+   "type": "service_door_left_open",
+   "threshold": 0.6305,
+   "enabled": false,
+   "source": "focus",
+   "generic": false,
+   "clean_max": 0.5805,
+   "own_hits": [],
+   "clean_firing_loo": []
+  },
+  "f_unauthorized_cash_area_entry": {
+   "type": "unauthorized_cash_area_entry",
+   "threshold": 0.607,
+   "enabled": false,
+   "source": "focus",
+   "generic": false,
+   "clean_max": 0.557,
+   "own_hits": [],
+   "clean_firing_loo": []
+  },
+  "v_judge": {
+   "type": "previous_cash_on_table",
+   "threshold": 0.7105,
+   "enabled": false,
+   "source": "vlm",
+   "generic": true,
+   "clean_max": 0.6805,
+   "own_hits": [],
+   "clean_firing_loo": []
+  }
+ }
+}

@@ -1,0 +1,32 @@
+{
+  "release": "Forte inclusive v3",
+  "policy_version": "recall-inclusive-v3",
+  "focus_version": "focus-states-v1",
+  "base_classifier_version": "classify-flow-v2",
+  "code_tests_passed": 28,
+  "real_model_quality_metrics": null,
+  "real_gpu_time_under_5_minutes_verified": false,
+  "numeric_deployment_thresholds_included": false,
+  "checks": {
+    "temporal_3_of_5_and_first_support": true,
+    "separate_same_type_episodes": true,
+    "negative_description_not_keyword_match": true,
+    "three_answer_orders_balanced": true,
+    "weak_owl_raw_proposals": true,
+    "owl_free_full_frame_survey": true,
+    "clear_crop_not_erased_by_blurry_view": true,
+    "no_cross_branch_veto": true,
+    "two_cutoffs_inside_evaluation_fold": true,
+    "focused_api_jpeg_contract": true,
+    "mock_deployment_rejected": true,
+    "cache_upgrade_from_previous_released_zip": true,
+    "base_owl_facts_flow_not_rerun_in_upgrade_test": true
+  },
+  "scope": "All vision regression checks use scripted or mock responses, not the actual model weights or original videos.",
+  "required_before_jury": [
+    "Resume known-video extraction to generate focus states",
+    "Calibrate and inspect excluded-video misses and false alarms",
+    "Measure the complete longest-video API latency including OWL and queueing"
+  ],
+  "unseen_zero_miss_guarantee": false
+}

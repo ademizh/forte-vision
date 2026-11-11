@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f6f7f9">
+<title>Forte Vision — контроль кассовых операций</title>
+<style>
+  :root {
+    --ink:#18212f; --muted:#667085; --line:#e5e9ef; --paper:#fff; --bg:#f5f7fa;
+    --brand:#a51d53; --brand-dark:#831642; --brand-soft:#fff0f5;
+    --green:#18794e; --green-bg:#eaf7f0; --red:#a32927; --red-bg:#fff0ee;
+    --amber:#8a5b00; --amber-bg:#fff7e5; --blue:#3457a5; --blue-bg:#edf2ff;
+    --shadow:0 12px 34px rgba(24,33,47,.06);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+  button,input{font:inherit}
+  button{cursor:pointer}
+  .shell{max-width:1240px;margin:0 auto;padding:0 28px}
+  header{height:72px;background:#fff;border-bottom:1px solid var(--line)}
+  .nav{height:100%;display:flex;align-items:center;justify-content:space-between;gap:18px}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:750;letter-spacing:.01em}
+  .brand-mark{width:36px;height:36px;border-radius:12px;background:var(--brand);color:#fff;display:grid;place-items:center;font-weight:800;font-size:18px}
+  .brand-sub{display:block;font-weight:450;color:var(--muted);font-size:12px;letter-spacing:0}.brand-team{color:var(--brand);font-weight:800;font-size:12px;letter-spacing:.01em}
+  .local-badge,.pill{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 11px;color:#465064;font-size:12px;font-weight:650}
+  .dot{width:7px;height:7px;background:#20935c;border-radius:100%}
+  main{padding:34px 0 64px}
+  .intro{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:24px}
+  h1{font-size:30px;line-height:1.2;letter-spacing:-.035em;margin:0 0 8px}
+  .lead{color:var(--muted);margin:0;max-width:700px}
+  .layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(360px,.95fr);gap:20px;align-items:start}
+  .stack{display:grid;gap:18px}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+  .card-pad{padding:21px}
+  .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}
+  h2{font-size:17px;letter-spacing:-.015em;margin:0}
+  h3{font-size:15px;margin:0}
+  .muted{color:var(--muted)}
+  .small{font-size:12px;color:var(--muted)}
+  .drop{min-height:185px;border:1.5px dashed #c9cfd9;border-radius:14px;background:#fbfcfd;display:grid;place-items:center;text-align:center;padding:22px;cursor:pointer;transition:.15s ease}
+  .drop:hover,.drop.over{border-color:var(--brand);background:var(--brand-soft)}
+  .upload-icon{width:44px;height:44px;border-radius:14px;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;margin:0 auto 10px}
+  .upload-icon svg{width:23px;height:23px}
+  .drop strong{display:block;font-size:15px;margin-bottom:3px}
+  .drop em{color:var(--brand);font-style:normal;font-weight:700}
+  .drop .small{margin-top:7px}
+  .file-row{display:none;align-items:center;gap:12px;margin-top:13px;padding:12px;border:1px solid var(--line);border-radius:12px}
+  .file-icon{width:38px;height:38px;border-radius:10px;background:#f1f3f6;display:grid;place-items:center;font-size:11px;font-weight:800;color:#4b5565;flex:none}
+  .file-meta{min-width:0;flex:1}
+  .file-name{font-weight:650;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .icon-btn{border:1px solid var(--line);background:#fff;color:var(--muted);width:34px;height:34px;border-radius:9px}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
+  .btn{border:0;border-radius:10px;padding:11px 16px;font-weight:700;transition:.15s ease}
+  .btn-primary{background:var(--brand);color:#fff}
+  .btn-primary:hover:not(:disabled){background:var(--brand-dark);transform:translateY(-1px)}
+  .btn-secondary{background:#fff;color:#344054;border:1px solid var(--line)}
+  .btn-secondary:hover{background:#f8f9fb}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .privacy{display:flex;gap:9px;align-items:flex-start;margin:13px 1px 0;color:var(--muted);font-size:12px}
+  .privacy svg{flex:none;margin-top:1px;color:#667085}
+  .video-wrap{display:none;margin-top:16px;overflow:hidden;border-radius:12px;background:#101828}
+  video{display:block;width:100%;max-height:360px;background:#101828}
+  .video-caption{display:flex;justify-content:space-between;gap:12px;padding:9px 12px;background:#f8f9fb;font-size:12px;color:var(--muted)}
+  .workflow{display:grid;gap:0;margin-top:15px}
+  .step{display:grid;grid-template-columns:30px 1fr;gap:11px;position:relative;padding-bottom:17px}
+  .step:last-child{padding-bottom:0}
+  .step:not(:last-child):after{content:"";position:absolute;left:14px;top:29px;bottom:0;width:1px;background:var(--line)}
+  .step-num{position:relative;z-index:1;width:29px;height:29px;border-radius:50%;display:grid;place-items:center;background:#f0f2f5;color:#768092;font-size:12px;font-weight:750}
+  .step.active .step-num{background:var(--brand-soft);color:var(--brand);box-shadow:0 0 0 4px #fff6f9}
+  .step.done .step-num{background:var(--green-bg);color:var(--green)}
+  .step-title{font-size:13px;font-weight:700;margin:1px 0 2px}
+  .step-desc{font-size:12px;color:var(--muted)}
+  .status-box{display:none;margin-top:16px;padding:13px 14px;border-radius:12px;background:#f8f9fb;border:1px solid var(--line)}
+  .status-line{display:flex;align-items:center;gap:10px;font-weight:650;font-size:13px}
+  .spinner{width:16px;height:16px;border:2px solid #e3d5dc;border-top-color:var(--brand);border-radius:50%;animation:spin .8s linear infinite;flex:none}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .status-detail{margin:6px 0 0 26px;font-size:12px;color:var(--muted)}
+  .result{display:none}
+  .result-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+  .verdict{display:flex;gap:12px;align-items:flex-start;padding:15px;border-radius:13px;flex:1}
+  .verdict.ok{background:var(--green-bg);color:var(--green)}
+  .verdict.bad{background:var(--red-bg);color:var(--red)}
+  .verdict-icon{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.7);font-weight:900;flex:none}
+  .verdict-title{font-size:15px;font-weight:800;line-height:1.35}
+  .verdict-sub{font-size:12px;opacity:.82;margin-top:3px}
+  .result-actions{display:flex;gap:8px;flex:none}
+  .result-actions .btn{padding:9px 12px;font-size:12px}
+  .event{border:1px solid var(--line);border-radius:14px;margin-top:14px;overflow:hidden}
+  .event-head{padding:15px 16px 12px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+  .event-title{font-weight:750;line-height:1.35}
+  .time-link{border:1px solid #ead5df;background:var(--brand-soft);color:var(--brand-dark);padding:5px 9px;border-radius:8px;font-variant-numeric:tabular-nums;font-weight:750;white-space:nowrap}
+  .event-body{padding:0 16px 15px}
+  .event-body p{margin:0 0 11px;font-size:13px;color:#465064}
+  .event-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;font-weight:800;color:#8a5267;margin:13px 0 5px}
+  .source{padding:10px 11px;background:#f8f9fb;border-radius:9px;font-size:12px;color:#4e586a}
+  .source strong{color:#293346}
+  .evidence{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:9px;margin-top:10px}
+  .evidence figure{margin:0;cursor:pointer}
+  .evidence img,.evidence-placeholder{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:9px;border:1px solid var(--line);background:#f1f3f6;display:grid;place-items:center;color:#8892a3;font-size:12px}
+  .evidence figcaption{display:flex;justify-content:space-between;margin-top:5px;font-size:11px;color:var(--muted)}
+  .timeline{height:5px;background:#e8ebf0;border-radius:9px;margin-top:13px;position:relative}
+  .timeline-mark{position:absolute;top:-3px;width:11px;height:11px;border-radius:50%;background:var(--brand);border:2px solid #fff;box-shadow:0 0 0 1px var(--brand)}
+  .method-list{display:grid;gap:13px}
+  .method-item{display:flex;align-items:flex-start;gap:11px}
+  .method-icon{width:30px;height:30px;border-radius:9px;background:#f3f5f8;color:#5c6678;display:grid;place-items:center;font-size:12px;font-weight:800;flex:none}
+  .method-item strong{display:block;font-size:13px}
+  .method-item span{display:block;font-size:12px;color:var(--muted);margin-top:1px}
+  .trust-card{background:var(--amber-bg);color:var(--amber);border-color:#f0dfb4}
+  .trust-card .small{color:#755400}
+  .trust-row{display:flex;gap:11px;align-items:flex-start}
+  .trust-icon{width:31px;height:31px;border-radius:10px;background:#f3e6c3;display:grid;place-items:center;flex:none}
+  .trust-row strong{display:block;font-size:13px}
+  .trust-row p{margin:3px 0 0;color:#755400;font-size:12px}
+  .demo-banner{display:none;padding:10px 12px;background:var(--amber-bg);color:var(--amber);border:1px solid #f0dfb4;border-radius:10px;font-size:12px;margin:13px 0 0}
+  .empty{padding:28px 16px;text-align:center;color:var(--muted);font-size:13px;border:1px dashed var(--line);border-radius:12px;margin-top:14px}
+  .error-box{display:none;margin-top:14px;padding:12px 14px;border-radius:10px;background:var(--red-bg);color:var(--red);font-size:13px}
+  .footer-note{margin:22px 0 0;color:var(--muted);font-size:12px;display:flex;gap:8px;align-items:flex-start}
+  #lightbox{position:fixed;inset:0;z-index:20;background:rgba(10,16,25,.88);display:none;align-items:center;justify-content:center;padding:22px;cursor:zoom-out}
+  #lightbox img{max-width:min(1200px,100%);max-height:100%;object-fit:contain;border-radius:8px}
+  @media(max-width:850px){.layout{grid-template-columns:1fr}.intro{align-items:flex-start;flex-direction:column}.result-top{flex-direction:column}.result-actions{width:100%}}
+  @media(max-width:560px){.shell{padding:0 15px}header{height:62px}main{padding:24px 0 45px}h1{font-size:25px}.local-badge{font-size:0;padding:9px}.local-badge .dot{width:8px;height:8px}.card-pad{padding:16px}.drop{min-height:155px}.result-actions .btn{flex:1}.event-head{padding:13px}.event-body{padding:0 13px 13px}}
+  @media print{body{background:#fff}.shell{max-width:none;padding:0}.nav,.upload-card,.method-card,.trust-card,.footer-note,.result-actions{display:none!important}.layout{display:block}.result{display:block!important}.card{box-shadow:none;break-inside:avoid}.evidence img{max-height:220px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="shell nav">
+    <div class="brand"><div class="brand-mark">F</div><div>Forte Vision <span class="brand-team">by Quanta</span><span class="brand-sub">Контроль кассовых операций</span></div></div>
+    <div class="local-badge"><span class="dot"></span> Локальный контур обработки</div>
+  </div>
+</header>
+<main class="shell">
+  <section class="intro">
+    <div><h1>Проверка видео кассовых операций</h1><p class="lead">Загрузите запись, чтобы получить предварительные события с таймкодами, кадрами-доказательствами и основаниями для проверки.</p></div>
+    <span class="pill">AI-помощник проверяющего</span>
+  </section>
+
+  <div class="layout">
+    <div class="stack">
+      <section class="card card-pad upload-card">
+        <div class="card-head"><div><h2>1. Загрузите видеозапись</h2><div class="small" style="margin-top:4px">Поддерживаются видео в форматах MOV и MP4</div></div><span class="pill">до 300 МБ</span></div>
+        <label class="drop" id="drop" for="file">
+          <input type="file" id="file" accept=".mov,.mp4,video/quicktime,video/mp4" hidden>
+          <div><div class="upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M4 15.5v3A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5v-3" stroke-linecap="round" stroke-linejoin="round"/></svg></div><strong>Перетащите видео сюда</strong><span>или <em>выберите файл</em> на устройстве</span><div class="small">Запись не должна содержать пароль или персональные данные в названии файла</div></div>
+        </label>
+        <div class="file-row" id="fileRow"><div class="file-icon">VIDEO</div><div class="file-meta"><div class="file-name" id="fileName"></div><div class="small" id="fileInfo"></div></div><button class="icon-btn" id="removeFile" aria-label="Удалить видео" title="Удалить видео">×</button></div>
+        <div class="video-wrap" id="videoWrap"><video id="video" controls playsinline></video><div class="video-caption"><span>Предпросмотр выбранной записи</span><span id="videoMeta"></span></div></div>
+        <div class="actions"><button class="btn btn-primary" id="go" disabled>Начать проверку</button><button class="btn btn-secondary" id="demo">Посмотреть пример отчёта</button></div>
+        <div class="privacy"><span aria-hidden="true">ⓘ</span><span>Видео используется для анализа в рамках этой проверки. Результат помогает найти фрагмент, но решение принимает проверяющий.</span></div>
+        <div class="status-box" id="statusBox"><div class="status-line"><span class="spinner" id="spinner"></span><span id="statusText">Ожидает загрузки</span></div><div class="status-detail" id="statusDetail"></div></div>
+        <div class="error-box" id="errorBox"></div>
+      </section>
+
+      <section class="card card-pad result" id="resultCard">
+        <div class="card-head"><div><h2>2. Результат проверки</h2><div class="small" id="resultMeta" style="margin-top:4px"></div></div><div class="result-actions"><button class="btn btn-secondary" id="printReport">Печать / PDF</button><button class="btn btn-secondary" id="downloadReport">Скачать JSON</button></div></div>
+        <div id="demoBanner" class="demo-banner">Пример интерфейса — это демонстрационные данные, не результат анализа загруженного видео.</div>
+        <div id="verdictSlot"></div>
+        <div id="eventsSlot"></div>
+      </section>
+    </div>
+
+    <aside class="stack">
+      <section class="card card-pad method-card">
+        <div class="card-head"><div><h2>Как проходит проверка</h2><div class="small" style="margin-top:4px">От видео к проверяемому событию</div></div></div>
+        <div class="workflow" id="workflow">
+          <div class="step" data-step="1"><div class="step-num">1</div><div><div class="step-title">Приём видео</div><div class="step-desc">Проверяем формат и готовим запись</div></div></div>
+          <div class="step" data-step="2"><div class="step-num">2</div><div><div class="step-title">Поиск действий</div><div class="step-desc">Модель анализирует последовательность кадров</div></div></div>
+          <div class="step" data-step="3"><div class="step-num">3</div><div><div class="step-title">Кадры и основания</div><div class="step-desc">Собираем таймкоды, доказательства и правило</div></div></div>
+        </div>
+      </section>
+      <section class="card card-pad trust-card">
+        <div class="trust-row"><div class="trust-icon">✓</div><div><strong>Важно: результат нужно проверить</strong><p>Сервис отмечает фрагменты с возможными признаками нарушения. Проверьте видео, кадры и контекст перед выводами. Это подсказка сотруднику, а не юридическое или дисциплинарное заключение.</p></div></div>
+      </section>
+      <section class="card card-pad method-card">
+        <div class="card-head"><div><h2>Что получит проверяющий</h2><div class="small" style="margin-top:4px">В каждом событии собрана опорная информация</div></div></div>
+        <div class="method-list">
+          <div class="method-item"><div class="method-icon">01</div><div><strong>Тип возможного нарушения</strong><span>Формулировка из каталога правил</span></div></div>
+          <div class="method-item"><div class="method-icon">02</div><div><strong>Таймкод и кадры</strong><span>Нажмите на отметку, чтобы перейти к фрагменту</span></div></div>
+          <div class="method-item"><div class="method-icon">03</div><div><strong>Наблюдаемое основание</strong><span>Краткое описание и ссылка на источник</span></div></div>
+        </div>
+      </section>
+    </aside>
+  </div>
+  <p class="footer-note"><span>ⓘ</span><span>Система сообщает о возможных признаках нарушения. Отсутствие события в отчёте не является гарантией отсутствия нарушения; итоговую оценку делает уполномоченный сотрудник.</span></p>
+</main>
+<div id="lightbox" role="dialog" aria-label="Увеличенный кадр"><img alt="Увеличенный кадр-доказательство"></div>
+<script>
+const $ = id => document.getElementById(id);
+const fileInput=$('file'), drop=$('drop'), go=$('go'), out=$('eventsSlot');
+let file=null, pollTimer=null, startedAt=0, currentResult=null, objectUrl=null;
+const MAX_BYTES=300*1024*1024;
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function mmss(value){const n=Math.max(0,Number(value)||0),m=Math.floor(n/60),s=Math.floor(n%60);return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;}
+function setSteps(active,done=0){document.querySelectorAll('.step').forEach(el=>{const n=Number(el.dataset.step);el.classList.toggle('active',n===active);el.classList.toggle('done',n<=done);});}
+function resetResult(){ $('resultCard').style.display='none';$('demoBanner').style.display='none';$('verdictSlot').innerHTML='';out.innerHTML='';currentResult=null; }
+function showError(message){const box=$('errorBox');box.textContent=message;box.style.display='block';}
+function clearError(){$('errorBox').style.display='none';$('errorBox').textContent='';}
+function niceBytes(bytes){return bytes<1024*1024?`${(bytes/1024).toFixed(0)} КБ`:`${(bytes/1024/1024).toFixed(1)} МБ`;}
+function choose(f){clearError();resetResult();if(!f)return;
+  if(!/\.(mov|mp4)$/i.test(f.name)){showError('Выберите видео в формате .mov или .mp4.');return;}
+  if(f.size>MAX_BYTES){showError('Файл превышает ограничение 300 МБ.');return;}
+  file=f;$('fileName').textContent=f.name;$('fileInfo').textContent=`${niceBytes(f.size)} · длительность и разрешение определяются после загрузки`;$('fileRow').style.display='flex';go.disabled=false;
+  if(objectUrl)URL.revokeObjectURL(objectUrl);objectUrl=URL.createObjectURL(f);$('video').src=objectUrl;$('videoWrap').style.display='block';$('video').onloadedmetadata=()=>{const v=$('video');const duration=Number.isFinite(v.duration)?`${mmss(v.duration)} · `:'';$('fileInfo').textContent=`${niceBytes(f.size)} · ${duration}${v.videoWidth}×${v.videoHeight}`;$('videoMeta').textContent=`${v.videoWidth}×${v.videoHeight}`;};
+  $('statusBox').style.display='none';setSteps(0,0);
+}
+fileInput.addEventListener('change',()=>choose(fileInput.files?.[0]));
+$('removeFile').onclick=()=>{file=null;fileInput.value='';$('fileRow').style.display='none';$('videoWrap').style.display='none';$('video').removeAttribute('src');if(objectUrl)URL.revokeObjectURL(objectUrl);objectUrl=null;go.disabled=true;$('statusBox').style.display='none';resetResult();clearError();setSteps(0,0);};
+['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('over');}));
+['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('over');}));
+drop.addEventListener('drop',e=>choose(e.dataTransfer.files?.[0]));
+function status(text,detail='',active=2,done=1){$('statusBox').style.display='block';$('statusText').textContent=text;$('statusDetail').textContent=detail;setSteps(active,done);}
+function evidenceMarkup(x){const frames=Array.isArray(x.evidence_frames)?x.evidence_frames:[];if(!frames.length)return '<div class="evidence-placeholder">Кадр появится после обработки</div>';
+ return `<div class="evidence">${frames.map(f=>{const t=Number(f.timestamp_sec)||0, b64=String(f.image_base64||'');const safe=/^[A-Za-z0-9+/=]+$/.test(b64)?b64:'';return `<figure data-seek="${t}">${safe?`<img loading="lazy" src="data:image/jpeg;base64,${safe}" alt="Кадр-доказательство ${mmss(t)}">`:'<div class="evidence-placeholder">Кадр недоступен</div>'}<figcaption><span>Кадр-доказательство</span><strong>${mmss(t)}</strong></figcaption></figure>`;}).join('')}</div>`;}
+function renderResult(j,options={}){currentResult=j;$('resultCard').style.display='block';$('demoBanner').style.display=options.demo?'block':'none';$('resultMeta').textContent=options.demo?'Демонстрационный сценарий':`${file?.name||'Видеозапись'} · обработка завершена`;setSteps(0,3);$('statusBox').style.display='none';
+ const events=Array.isArray(j.violations)?j.violations:[];const bad=events.length>0;const verdict=j.verdict|| (bad?'violation':'no_violation');const flagged=verdict==='violation'||bad;
+ $('verdictSlot').innerHTML=`<div class="result-top"><div class="verdict ${flagged?'bad':'ok'}"><div class="verdict-icon">${flagged?'!':'✓'}</div><div><div class="verdict-title">${flagged?'Обнаружены признаки возможных нарушений':'Нарушение не обнаружено'}</div><div class="verdict-sub">${flagged?`Событий для проверки: ${events.length}`:'По результатам анализа события не отмечены'}</div></div></div></div>`;
+ if(!events.length){out.innerHTML=`<div class="empty">${options.demo?'Здесь будут отображаться найденные события, кадры и ссылки на правила.':'Проверяющий может просмотреть видео и завершить проверку.'}</div>`;}
+ else out.innerHTML=events.map((x,i)=>{const sec=Number(x.timecode_sec)||0,src=x.rule||x.source||{},doc=src.document||src.title||'',clause=src.clause||'';const description=x.description||x.reason||'Наблюдаемое действие требует проверки.';const timeline=Number.isFinite(Number(file?$('video').duration:NaN))?`<div class="timeline"><span class="timeline-mark" style="left:${Math.max(0,Math.min(100,sec/Math.max(1,$('video').duration)*100))}%"></span></div>`:'';return `<article class="event"><div class="event-head"><div class="event-title">${i+1}. ${esc(x.type||'Возможное нарушение')}</div><button class="time-link" data-seek="${sec}" title="Перейти к моменту в видео">▶ ${mmss(sec)}</button></div><div class="event-body"><div class="event-label">Что видно</div><p>${esc(description)}</p>${x.uncertainty?`<p class="small"><strong>Что ещё проверить:</strong> ${esc(x.uncertainty)}</p>`:''}<div class="event-label">Правило / источник</div><div class="source">${doc?`<strong>${esc(doc)}</strong>${clause?` · ${esc(clause)}`:''}`:'Источник не указан в результате анализа.'}</div>${evidenceMarkup(x)}${timeline}</div></article>`;}).join('');
+ document.querySelectorAll('[data-seek]').forEach(el=>el.addEventListener('click',()=>{const t=Number(el.dataset.seek);if(file&&Number.isFinite(t)){const v=$('video');v.currentTime=Math.min(t,Number.isFinite(v.duration)?v.duration:t);v.scrollIntoView({behavior:'smooth',block:'center'});}}));
+ $('resultCard').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function poll(jobId){clearTimeout(pollTimer);const tick=async()=>{try{const r=await fetch(`/web/jobs/${encodeURIComponent(jobId)}`);if(!r.ok)throw new Error(`Не удалось получить статус (${r.status})`);const j=await r.json();if(j.status==='processing'){const elapsed=Math.floor((Date.now()-startedAt)/1000);const stage=elapsed<8?2:3;status('Анализ видео выполняется',`Прошло ${elapsed} с. Сервер пока не передаёт точный процент готовности.`,stage,1);pollTimer=setTimeout(tick,1800);}else if(j.status==='done'){go.disabled=false;renderResult(j);}else{go.disabled=false;$('statusBox').style.display='none';showError(`Обработка не завершилась: ${j.error||'неизвестная ошибка'}`);setSteps(0,0);}}catch(e){status('Связь с сервером потеряна','Повторно проверяем статус задачи…',2,1);pollTimer=setTimeout(tick,3000);}};tick();}
+go.onclick=async()=>{if(!file)return;clearError();resetResult();if(location.protocol==='file:'||(['localhost','127.0.0.1'].includes(location.hostname)&&location.port&&location.port!=='8000')){showError('Для проверки видео нужен сервер. Откройте http://localhost:8000 через run.bat, не file:/// и не Go Live. Пример отчёта работает без сервера.');return;}go.disabled=true;startedAt=Date.now();status('Передаём видео на сервер','Сервер примет запись и запустит обработку.',1,0);const fd=new FormData();fd.append('file',file);try{const r=await fetch('/web/analyze',{method:'POST',body:fd});let j={};try{j=await r.json();}catch{}if(!r.ok)throw new Error(j.detail||`Сервер ответил: ${r.status} ${r.statusText}`);if(!j.job_id)throw new Error('Сервер не вернул номер задачи. Перезапустите run.bat и обновите страницу.');status('Видео принято сервером','Идёт обработка записи.',2,1);poll(j.job_id);}catch(e){go.disabled=false;$('statusBox').style.display='none';showError(`Не удалось связаться с сервером: ${e.message} Проверьте, что чёрное окно run.bat открыто, и зайдите на http://localhost:8000.`);setSteps(0,0);}};
+$('demo').onclick=()=>{clearError();const demo={verdict:'violation',violations:[{type:'Пример: оставление наличных без присмотра',timecode_sec:12.4,description:'В демонстрационном сценарии на кадре видно наличные на рабочем столе. Проверяющему следует убедиться по фрагменту, что кассир действительно отошёл и деньги остались без наблюдения.',uncertainty:'Пример не подтверждает реальное нарушение; в настоящем анализе нужно проверить непрерывность события и присутствие кассира.',rule:{document:'Правила осуществления кассовых операций и операций по инкассации банкнот, монет и ценностей (Постановление Правления НБРК № 231 от 29.11.2019)',clause:'п. 20'},evidence_frames:[]} ]};renderResult(demo,{demo:true});};
+$('printReport').onclick=()=>window.print();
+$('downloadReport').onclick=()=>{if(!currentResult)return;const blob=new Blob([JSON.stringify({video:file?.name||null,...currentResult},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='forte-vision-report.json';a.click();URL.revokeObjectURL(a.href);};
+$('lightbox').onclick=()=>{$('lightbox').style.display='none';};
+document.addEventListener('click',e=>{if(e.target.matches('.evidence img')){$('lightbox').querySelector('img').src=e.target.src;$('lightbox').style.display='flex';}});
+</script>
+</body>
+</html>
+

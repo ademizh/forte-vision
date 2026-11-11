@@ -1,0 +1,5 @@
+transformers==4.49.*
+accelerate>=1.2
+huggingface_hub[cli]>=0.26
+pillow>=10
+pyyaml>=6

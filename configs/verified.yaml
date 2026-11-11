@@ -1,0 +1,103 @@
+# Engine "verified": Grounding DINO + ByteTrack + temporal state machines + adaptive sampling + SmolVLM2
+# + evidence fusion + calibrated thresholds.  Every number here is a parameter, not a result.
+# Changing a section changes the cache key of the stages that use it (pipeline/config.py).
+
+models:
+  detector_path: C:\opt\forte\models\grounding-dino-tiny      # IDEA-Research/grounding-dino-tiny   (env DINO_PATH)
+  vlm_path: C:\models\smolvlm2-2.2b-instruct                   # HuggingFaceTB/SmolVLM2-2.2B-Instruct (env SMOLVLM_PATH)
+  device: cuda
+  dtype: bfloat16
+
+sampling:
+  coarse_fps: 1.0            # stage 1: every frame at this rate gets Grounding DINO
+  focus_fps: 2.0             # stage 3: denser frames around candidate events
+  focus_pre_sec: 3.0         # context before a candidate (its cause)
+  focus_post_sec: 3.0
+  max_width: 1280            # 464x848 videos are never downscaled
+  fallback_windows: 6        # stage 5: periodic VLM windows when no detector candidate exists for a rule family
+
+detection:
+  # Grounding DINO captions are limited in length: prompts are sent in small groups
+  prompt_groups:
+    - {person: "person", cash: "banknotes", key: "key", bag: "bag"}
+    - {cup: "cup", phone: "mobile phone", handbag: "handbag", backpack: "backpack"}
+    - {safe: "safe", laptop: "laptop", monitor: "computer monitor", door: "door", drawer: "cash drawer"}
+  top_k: 6                   # several objects of one class per frame are kept (not one argmax box)
+  min_score: 0.12            # boxes below this are not stored at all
+  high: {person: 0.35, cash: 0.25, key: 0.25, bag: 0.28, cup: 0.25, phone: 0.28, handbag: 0.28, backpack: 0.28}
+  low:  {person: 0.20, cash: 0.15, key: 0.15, bag: 0.18, cup: 0.15, phone: 0.18, handbag: 0.18, backpack: 0.18}
+  tiles:
+    enabled: true
+    every: 2                 # tiled search for small objects every N coarse frames (benchmark before lowering)
+    size: 416
+    overlap: 0.2
+    objects: [cash, key, cup, phone]
+  nms_iou: 0.5
+  fixture_share: 0.95        # an object at the same place in >= 95% of frames is probably furniture ...
+  fixture_factor: 0.6        # ... its confidence is lowered (not removed: cash lying the whole video is real)
+
+tracking:
+  backend: auto              # auto = Roboflow "trackers" ByteTrack if installed, else the built-in ByteTrack
+  high_conf: 0.35            # ByteTrack stage 1 (high-score boxes) / stage 2 (low boxes only continue tracks)
+  activation: 0.35
+  lost_buffer_sec: 4         # a person may disappear this long and keep the same id
+  min_iou: 0.1
+  object_classes: [cash, key, bag, cup, handbag, backpack, phone]
+
+zones:
+  cashier_expand: 0.25       # cashier zone = median box of the cashier track, enlarged
+  desk_expand: 0.45
+  roi_min_score: 0.20        # safe / laptop / door / drawer: median score needed to accept a fixed region
+  cashier_min_share: 0.25    # a track must be present this share of the video to be the cashier
+
+temporal:
+  gap_tolerance_sec: 2.0     # UNKNOWN gaps up to this long between equal states are bridged
+  departure_min_sec: 3.0     # cashier absent at least this long = departure (brief occlusion is not)
+  return_min_sec: 2.0
+  hysteresis_on: 2           # frames above HIGH to switch a state on
+  hysteresis_off: 2          # frames below LOW to switch it off
+
+rules:                       # durations per violation (seconds); see pipeline/rules.py for the sequences
+  cash_unattended:           {min_duration: 3.0}
+  previous_cash_on_table:    {cash_before_arrival: 3.0}
+  coffee_over_cash:          {min_duration: 2.0, near_factor: 1.5}
+  personal_items_cash_area:  {min_duration: 6.0}
+  unauthorized_cash_area_entry: {min_duration: 2.0, overlap: 0.5}
+  collection_bag_not_inspected: {max_visit: 8.0}
+  cash_collection_without_checks: {max_visit: 8.0}
+  collection_bag_unsecured:  {min_duration: 3.0}
+  safe_left_open:            {min_duration: 3.0}
+  safe_key_unattended:       {min_duration: 3.0, near_safe_factor: 1.5}
+  service_door_left_open:    {min_duration: 6.0, step: 4.0, max_samples: 12}
+  unlocked_bank_terminal:    {min_duration: 5.0}
+  counting_without_customer: {within_sec: 10.0}
+  cash_count_interrupted:    {}
+  incomplete_cash_payout:    {}
+  acceptance_without_documents: {}
+  mixed_denominations_stack: {}
+
+vlm:
+  enabled: true
+  max_frames: 6              # images per VLM call
+  longest_edge: 1152         # SmolVLM2 image processor resize (smaller = faster, less detail)
+  image_splitting: true      # sub-image splitting: more detail for small objects, more tokens
+  crop_scale: 2.0            # region crops (safe, door, screen, object) are enlarged this much
+  both_orders: true          # every multiple-choice question in two option orders (cancels letter bias)
+  explain: false             # one short generated explanation per reported event (slower)
+  budget_calls: 160          # max VLM forward passes per video
+  question_version: q-v1
+
+fusion:
+  vlm_weight: 0.5            # score = rule_score * ((1 - w) + w * vlm_support)
+  vlm_yes: 0.55              # p(yes) at or above this = TRUE
+  vlm_no: 0.60               # p(no) at or above this = FALSE
+  unknown_penalty: 0.6       # a mandatory condition that is UNKNOWN multiplies the score by this
+
+decision:
+  objective: f2              # thresholds maximise F2 (recall weighted 2x) ...
+  max_fpr: 0.20              # ... subject to a false-alarm rate on clean training videos of at most this
+  per_type_min_positives: 2  # a type gets its own threshold only with this many positive videos, else global
+  default_threshold: 0.35    # used until calibrate has been run
+  report_review_as_violation: true   # bank: a missed violation is unacceptable -> "needs review" is reported
+  conformal_alpha: 0.10
+  max_seconds: 280           # wall-clock budget per video (competition limit 300 s)

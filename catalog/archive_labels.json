@@ -1,0 +1,216 @@
+{
+  "provenance": {
+    "positive_labels": "Original archive catalog/violations.yaml videos entries",
+    "clean_labels": "Original archive catalog/state_thresholds.json clean_videos",
+    "missing": "Original data/labels.csv and timing labels were NOT supplied",
+    "duplicate_groups": {
+      "X-47": "X-4",
+      "X-48": "X-5"
+    },
+    "requires_user_verification": true
+  },
+  "videos": {
+    "X-1": {
+      "label": "violation",
+      "types": [
+        "incomplete_cash_payout"
+      ]
+    },
+    "X-10": {
+      "label": "no_violation",
+      "types": []
+    },
+    "X-11": {
+      "label": "violation",
+      "types": [
+        "safe_key_unattended"
+      ]
+    },
+    "X-12": {
+      "label": "no_violation",
+      "types": []
+    },
+    "X-13": {
+      "label": "violation",
+      "types": [
+        "cash_collection_without_checks"
+      ]
+    },
+    "X-14": {
+      "label": "no_violation",
+      "types": []
+    },
+    "X-15": {
+      "label": "violation",
+      "types": [
+        "collection_bag_unsecured"
+      ]
+    },
+    "X-16": {
+      "label": "no_violation",
+      "types": []
+    },
+    "X-17": {
+      "label": "violation",
+      "types": [
+        "collection_bag_not_inspected"
+      ]
+    },
+    "X-18": {
+      "label": "violation",
+      "types": [
+        "cash_count_interrupted"
+      ]
+    },
+    "X-19": {
+      "label": "no_violation",
+      "types": []
+    },
+    "X-2": {
+      "label": "violation",
+      "types": [
+        "acceptance_without_documents"
+      ]
+    },
+    "X-20": {
+      "label": "violation",
+      "types": [
+        "safe_left_open"
+      ]
+    },
+    "X-21": {
+      "label": "no_violation",
+      "types": []
+    },
+    "X-22": {
+      "label": "violation",
+      "types": [
+        "safe_key_unattended"
+      ]
+    },
+    "X-23": {
+      "label": "no_violation",
+      "types": []
+    },
+    "X-24": {
+      "label": "violation",
+      "types": [
+        "personal_items_cash_area"
+      ]
+    },
+    "X-25": {
+      "label": "no_violation",
+      "types": []
+    },
+    "X-26": {
+      "label": "violation",
+      "types": [
+        "cash_unattended"
+      ]
+    },
+    "X-27": {
+      "label": "no_violation",
+      "types": []
+    },
+    "X-28": {
+      "label": "violation",
+      "types": [
+        "unlocked_bank_terminal"
+      ]
+    },
+    "X-29": {
+      "label": "no_violation",
+      "types": []
+    },
+    "X-3": {
+      "label": "no_violation",
+      "types": []
+    },
+    "X-30": {
+      "label": "violation",
+      "types": [
+        "unauthorized_cash_area_entry"
+      ]
+    },
+    "X-31": {
+      "label": "no_violation",
+      "types": []
+    },
+    "X-32": {
+      "label": "violation",
+      "types": [
+        "service_door_left_open"
+      ]
+    },
+    "X-33": {
+      "label": "violation",
+      "types": [
+        "service_door_left_open"
+      ]
+    },
+    "X-34": {
+      "label": "violation",
+      "types": [
+        "counting_without_customer"
+      ]
+    },
+    "X-35": {
+      "label": "no_violation",
+      "types": []
+    },
+    "X-37": {
+      "label": "no_violation",
+      "types": []
+    },
+    "X-38": {
+      "label": "violation",
+      "types": [
+        "previous_cash_on_table"
+      ]
+    },
+    "X-39": {
+      "label": "no_violation",
+      "types": []
+    },
+    "X-4": {
+      "label": "violation",
+      "types": [
+        "previous_cash_on_table"
+      ]
+    },
+    "X-40": {
+      "label": "violation",
+      "types": [
+        "personal_items_cash_area"
+      ]
+    },
+    "X-43": {
+      "label": "no_violation",
+      "types": []
+    },
+    "X-44": {
+      "label": "violation",
+      "types": [
+        "mixed_denominations_stack"
+      ]
+    },
+    "X-45": {
+      "label": "no_violation",
+      "types": []
+    },
+    "X-46": {
+      "label": "violation",
+      "types": [
+        "coffee_over_cash"
+      ]
+    },
+    "X-5": {
+      "label": "no_violation",
+      "types": []
+    },
+    "X-8": {
+      "label": "no_violation",
+      "types": []
+    }
+  }
+}

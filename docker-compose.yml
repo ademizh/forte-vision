@@ -1,0 +1,26 @@
+services:
+  api:
+    build: .
+    env_file: .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/data          # uploads + jobs.db survive restarts
+    restart: unless-stopped
+    # Uncomment when the GPU model is added (needs NVIDIA Container Toolkit):
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+  # Named Cloudflare tunnel = stable public URL. Start with: docker compose --profile tunnel up -d
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate run --token ${TUNNEL_TOKEN}
+    env_file: .env
+    depends_on: [api]
+    restart: unless-stopped
+    profiles: ["tunnel"]

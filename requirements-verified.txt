@@ -1,0 +1,18 @@
+# Verified engine: Grounding DINO + ByteTrack + SmolVLM2 (CPU-only unit tests need only the first block)
+numpy>=2.0.2,<2.3
+opencv-python-headless==4.10.*
+pillow>=10
+pyyaml>=6
+scipy>=1.11
+pytest>=8
+
+# GPU inference. Install torch FIRST from https://pytorch.org with the CUDA build for your driver, e.g.
+#   pip install torch --index-url https://download.pytorch.org/whl/cu124
+transformers==4.51.3          # SmolVLM2 needs >= 4.50; Grounding DINO is supported in this version too
+accelerate>=1.2
+num2words>=0.5.13             # required by the SmolVLM processor
+huggingface_hub[cli]>=0.26
+
+# ByteTrack, maintained implementation (optional: without it the built-in ByteTrack in pipeline/tracking.py is used)
+supervision==0.31.0
+trackers==2.6.1

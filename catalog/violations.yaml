@@ -1,0 +1,196 @@
+# Catalog v1: violation types for the VLM + citations for the service.
+# Built from the team's labeled table (22 violation videos). Clauses checked against the text of
+# Rules No. 231 and No. 14 (zakon.uchet.kz copy of adilet, 17.10.2026); see "verified" notes.
+#
+#   definition  -> what the VLM looks for (visible facts only). Edit these to improve detection.
+#   type        -> name returned to the jury (keep stable).
+#   source      -> shown as the legal basis. The VLM never writes it.
+#   basis       -> one line: why this may be a violation (goes into the description).
+
+documents:
+  NBRK_231: &d231 "Правила осуществления кассовых операций и операций по инкассации банкнот, монет и ценностей (Постановление Правления НБРК № 231 от 29.11.2019)"
+  NBRK_14: &d14 "Правила организации охраны и устройства помещений банков (Постановление Правления НБРК № 14 от 24.02.2020)"
+
+normal_routine: |
+  CORRECT behavior, written by the team from the clean videos (X-3, 5, 8, 10, 12, 14, 16, 19, 21, 23, 25, 27, 29, 31, 35, 39, 43, 45, 48).
+  Treat all of this as normal:
+
+  The desk normally holds: three cash-register devices, a laptop, a mobile phone and a landline phone.
+  A counting machine and a banknote checking device are also normal. Nothing else (no cup, food, bag or personal item).
+
+  Receiving cash from a client:
+  1. The client enters the cash room and closes the door behind them. The door stays closed during the whole operation.
+  2. The client hands over an identity document. The cashier inspects it (both sides) and compares the photo with the client.
+  3. The client hands over cash, usually one stack held with a rubber band, or an encashment (collection) bag,
+     and stays in the room (often sits down), watching the cashier count.
+  4. The cashier (or the client) removes the rubber band; the cashier counts the cash on the counting machine
+     in front of the client, sometimes checks it again on the authenticity device or by hand.
+  5. The cashier turns on the laptop / enters the operation data into the bank system.
+  6. The cashier opens the safe (with the key), puts the counted cash in, closes and locks the safe, and puts the key away.
+  7. The cashier returns the identity document to the client. The client says goodbye, leaves and closes the door.
+  8. The next client enters only AFTER the previous client has left, closes the door, sits down and hands over a document.
+  The previous client's cash is never left lying on the desk.
+
+  Handling cash without a client (cashier alone, door closed, nobody else in the room):
+  - The cashier cuts open an encashment bag, takes out the banknotes (tied with rubber bands), removes the bag from the desk,
+    sorts banknotes by denomination, counts them on the machine, and ties every denomination with its own rubber band.
+  - Counted banknotes are put on the desk SEPARATELY from other cash stacks and are not mixed with them.
+  - The cashier takes cash from the safe (opening it with the key), closes and locks the safe, returns to the desk and sits.
+  - The cashier puts the counted cash in the safe, locks it, takes the key, then switches the laptop on and enters the data.
+    Writing in the cash log book is normal; putting the log book and stamps into the safe is normal.
+  - The cashier puts a personal phone into a pocket. Nothing personal stands on the desk.
+
+  Opening the workplace:
+  - The cashier opens the door, enters and closes the door behind them, sits at the desk and switches on the three cash devices one by one.
+
+  Closing the workplace:
+  - The cashier finishes work on the laptop/computer, switches it off and closes the lid; switches off the cash devices with their buttons
+    or touch panel; tidies the desk; stands up; opens the safe with the key if needed, puts the log book, stamps or cash inside,
+    closes and LOCKS the safe, takes the KEY OUT of the lock and TAKES IT AWAY, switches off the light,
+    leaves the room and closes (locks) the door.
+  - Switching off the light, the computer or the devices is normal and is NOT a violation.
+  - Standing up and walking to the safe with cash is normal; a safe that is open only while the cashier stands beside it is normal.
+
+violations:
+  - id: incomplete_cash_payout
+    type: "Неполная выдача наличных денег клиенту"
+    definition: "When paying out, the cashier counts out cash but hands the client only part of it and keeps or puts aside the rest; the client leaves without the full amount."
+    basis: "Сумма выдаётся клиенту после пересчёта в его присутствии полностью."
+    source: {document: *d231, clause: "пп. 29, 31"}
+    legal_status: conditional
+    videos: [X-1]
+
+  - id: acceptance_without_documents
+    type: "Приём наличных без кассовых документов"
+    definition: "The cashier takes cash from a client and puts it away without any visible paperwork: no document is filled in, printed, signed or handed to the client."
+    basis: "Приём наличных оформляется приходными кассовыми документами, клиенту выдаётся подтверждение."
+    source: {document: *d231, clause: "пп. 17–19"}
+    legal_status: conditional
+    videos: [X-2]
+
+  - id: previous_cash_on_table
+    type: "Деньги предыдущего клиента остаются на столе при новой операции"
+    definition: "Cash from an earlier client is still lying on the cash desk while the cashier is already serving the next client."
+    basis: "Ранее принятые деньги хранятся в запирающемся устройстве на рабочем месте кассира."
+    source: {document: *d231, clause: "п. 20"}
+    legal_status: supported_if_conditions
+    videos: [X-4, X-38]
+
+  - id: safe_key_unattended
+    type: "Оставление ключа в замке сейфа без присмотра"
+    definition: "A key is left in the lock of the safe and the cashier walks away from the workplace."
+    basis: "Хранение ключей от сейфов должно исключать их несанкционированное использование."
+    source: {document: *d231, clause: "п. 80"}
+    legal_status: conditional
+    videos: [X-11, X-22]
+
+  - id: cash_collection_without_checks
+    type: "Приём ценностей от инкассатора без проверки"
+    definition: "A cash collector hands cash or a bag to the cashier, and the cashier accepts it without checking it (no look at the seal, no recount, no document check) before the collector leaves."
+    basis: "При приёме ценностей от инкассаторов кассир проверяет сопроводительный документ, целостность сумки и пломбы."
+    source: {document: *d231, clause: "п. 24"}
+    legal_status: conditional
+    videos: [X-13]
+
+  - id: collection_bag_not_inspected
+    type: "Приём инкассаторской сумки без проверки целостности, пломбы и документов"
+    definition: "The cashier takes a collection bag from a collector and puts it aside without inspecting the seal, the bag or its document; the collector leaves right away."
+    basis: "Кассир проверяет сопроводительный документ, целостность сумки и пломбы."
+    source: {document: *d231, clause: "п. 24"}
+    legal_status: conditional
+    videos: [X-17]
+
+  - id: collection_bag_unsecured
+    type: "Ненадлежащее хранение инкассаторской сумки"
+    definition: "A collection bag with valuables is left lying on the desk, floor or chair, not put into a safe or locked place, and is left unattended."
+    basis: "Хранение ценностей определяется внутренними документами банка и должно исключать несанкционированный доступ."
+    source: {document: *d231, clause: "п. 93 (косвенно: требования к инкассаторским сумкам)"}
+    legal_status: related_not_direct
+    videos: [X-15]
+
+  - id: cash_count_interrupted
+    type: "Прерывание пересчёта денег одного клиента ради обслуживания другого"
+    definition: "While counting cash of one client, the cashier stops and starts serving another client, leaving the first client's cash half-counted on the desk."
+    basis: "Деньги пересчитываются в присутствии клиента; операции оформляются по каждому документу отдельно."
+    source: {document: *d231, clause: "пп. 20–21"}
+    legal_status: conditional
+    videos: [X-18]
+
+  - id: safe_left_open
+    type: "Оставление сейфа с ценностями открытым без присмотра"
+    definition: "The safe door is open with cash or valuables inside and the cashier walks away or turns away from it."
+    basis: "Ранее принятые деньги хранятся в запирающемся устройстве."
+    source: {document: *d231, clause: "п. 20"}
+    legal_status: conditional
+    videos: [X-20]
+
+  - id: personal_items_cash_area
+    type: "Хранение личных вещей в кассовой зоне"
+    definition: "A personal item of the cashier (handbag, backpack, phone with camera, clothes) is kept on or at the cash desk."
+    basis: "Личные вещи работников хранятся вне кассового узла (кроме лекарств и средств связи без фото/видео)."
+    source: {document: *d231, clause: "п. 12"}
+    legal_status: supported_if_conditions
+    videos: [X-24, X-40]
+
+  - id: cash_unattended
+    type: "Оставление наличных денег без присмотра"
+    definition: "Cash lies openly on the desk and the cashier leaves the workplace, with nobody watching it."
+    basis: "Ранее принятые деньги хранятся в запирающемся устройстве на рабочем месте."
+    source: {document: *d231, clause: "п. 20"}
+    legal_status: supported_if_conditions
+    videos: [X-26]
+
+  - id: unlocked_bank_terminal
+    type: "Оставление разблокированного компьютера с банковской программой"
+    definition: "The cashier leaves the workplace while the computer screen stays on and unlocked with a program open."
+    basis: "Риск несанкционированного доступа к банковской программе."
+    source: {document: "Прямая норма в Правилах № 231 и № 14 не установлена", clause: "прямого пункта нет"}
+    legal_status: no_direct_clause
+    videos: [X-28]
+
+  - id: unauthorized_cash_area_entry
+    type: "Проникновение клиента в служебную кассовую зону"
+    definition: "A client or other outsider goes behind the counter or into the cashier's side of the room."
+    basis: "Кассовый узел изолируется от других помещений и имеет закрывающийся служебный вход."
+    source: {document: *d14, clause: "п. 8"}
+    legal_status: conditional
+    videos: [X-30]
+
+  - id: service_door_left_open
+    type: "Оставление служебной двери кассового узла открытой"
+    definition: "The service door of the cash room stays open (the cashier leaves it open or walks out without closing it)."
+    basis: "Кассовый узел изолируется одним закрывающимся служебным входом."
+    source: {document: *d14, clause: "п. 8"}
+    legal_status: conditional
+    videos: [X-32, X-33]
+
+  - id: counting_without_customer
+    type: "Пересчёт принимаемых наличных в отсутствие клиента"
+    definition: "The cashier counts cash received from a client after that client has already left the desk."
+    basis: "Наличные принимаются и пересчитываются в присутствии клиента."
+    source: {document: *d231, clause: "п. 20"}
+    legal_status: supported_if_conditions
+    videos: [X-34]
+
+  - id: mixed_denominations_stack
+    type: "Складывание пересчитанных банкнот разных номиналов друг на друга"
+    definition: "After counting, the cashier puts banknotes of different denominations (different colors/sizes) into one pile."
+    basis: "Наличные сортируются по номиналам и степени износа."
+    source: {document: *d231, clause: "п. 43"}
+    legal_status: conditional
+    videos: [X-44]
+
+  - id: coffee_over_cash
+    type: "Употребление кофе над банкнотами на столе"
+    definition: "The cashier drinks coffee or holds a drink cup directly above banknotes lying on the desk."
+    basis: "Риск загрязнения и повреждения банкнот."
+    source: {document: "Прямая норма в Правилах № 231 и № 14 не установлена", clause: "прямого пункта нет"}
+    legal_status: no_direct_clause
+    videos: [X-46]
+
+# Used when the VLM answers "other": a clearly irregular action that fits no type above.
+other:
+  id: other
+  type: "Нетипичное действие с наличными или ценностями"
+  basis: "Действие отличается от установленного порядка кассовых операций; требуется проверка человеком."
+  source: {document: *d231, clause: "общие требования к кассовым операциям"}

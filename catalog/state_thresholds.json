@@ -1,0 +1,51 @@
+{
+ "note": "tau = highest score in any clean video + margin (eval/state_eval.py --calibrate)",
+ "margin": 0.05,
+ "clean_videos": [
+  "X-10",
+  "X-12",
+  "X-14",
+  "X-16",
+  "X-19",
+  "X-21",
+  "X-23",
+  "X-25",
+  "X-27",
+  "X-29",
+  "X-3",
+  "X-31",
+  "X-35",
+  "X-37",
+  "X-39",
+  "X-43",
+  "X-45",
+  "X-5",
+  "X-8"
+ ],
+ "enabled": [
+  "cash_unattended",
+  "previous_cash_on_table",
+  "coffee_over_cash",
+  "personal_items_cash_area",
+  "collection_bag_not_inspected",
+  "cash_collection_without_checks",
+  "collection_bag_unsecured",
+  "unauthorized_cash_area_entry",
+  "counting_without_customer"
+ ],
+ "thresholds": {
+  "cash_unattended": 0.2233,
+  "previous_cash_on_table": 0.1055,
+  "coffee_over_cash": 0.2518,
+  "personal_items_cash_area": 0.3137,
+  "collection_bag_not_inspected": 0.1,
+  "cash_collection_without_checks": 0.1,
+  "collection_bag_unsecured": 0.1,
+  "unauthorized_cash_area_entry": 0.262,
+  "service_door_left_open": 0.8152,
+  "counting_without_customer": 0.1,
+  "safe_key_unattended": 0.6725,
+  "safe_left_open": 0.7811,
+  "unlocked_bank_terminal": 1.0414
+ }
+}

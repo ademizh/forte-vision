@@ -1,0 +1,178 @@
+# Local norm base for the norm search (pipeline/norms.py). One entry per rule the system can check.
+#   text        short statement of the requirement (PARAPHRASE of the clause, from catalog/violations.yaml;
+#               put the official wording into norms/*.txt to have it searched and quoted as well)
+#   conditions  what must be VISIBLE for the rule to apply (checked one by one, pipeline/chain.py)
+#   exceptions  normal situations that look similar but are not a violation (from the clean videos)
+#   tags        observation kinds (pipeline/observe.py) that make this rule relevant
+documents:
+  NBRK_231: "Правила осуществления кассовых операций и операций по инкассации банкнот, монет и ценностей (Постановление Правления НБРК № 231 от 29.11.2019)"
+  NBRK_14: "Правила организации охраны и устройства помещений банков (Постановление Правления НБРК № 14 от 24.02.2020)"
+  NONE: "Прямая норма в Правилах № 231 и № 14 не установлена"
+
+norms:
+  - id: n231_p80_key
+    applies_to: safe_key_unattended
+    document: NBRK_231
+    clause: "п. 80"
+    text: "Хранение ключей от сейфов должно исключать их несанкционированное использование."
+    text_status: paraphrase
+    conditions:
+      - "the object is a key"
+      - "the key is inserted in the lock of the safe"
+      - "the responsible employee walks away from the workplace"
+      - "the key stays in the lock while nobody is next to the safe"
+    exceptions:
+      - "the cashier stands next to the safe and is using the key"
+      - "the cashier locks the safe and takes the key out before leaving"
+    tags: [cashier_leaves, region_safe, object_key, ключ, сейф, замок]
+
+  - id: n231_p20_safe_open
+    applies_to: safe_left_open
+    document: NBRK_231
+    clause: "п. 20"
+    text: "Ранее принятые деньги хранятся в запирающемся устройстве на рабочем месте кассира."
+    text_status: paraphrase
+    conditions:
+      - "the door of the safe is open"
+      - "the cashier walks away or turns away from the safe"
+      - "the safe stays open while nobody is next to it"
+    exceptions:
+      - "a safe that is open only while the cashier stands beside it is normal"
+    tags: [cashier_leaves, region_safe, сейф, открыт]
+
+  - id: n231_p20_cash
+    applies_to: cash_unattended
+    document: NBRK_231
+    clause: "п. 20"
+    text: "Ранее принятые деньги хранятся в запирающемся устройстве на рабочем месте кассира, а не на столе."
+    text_status: paraphrase
+    conditions:
+      - "banknotes or stacks of money lie on the desk"
+      - "the cashier leaves the workplace"
+      - "the money stays on the desk with nobody watching it"
+    exceptions:
+      - "the cashier counts the money at the desk in front of the client"
+      - "the cashier carries the money to the safe"
+    tags: [cashier_leaves, object_cash, наличные, стол]
+
+  - id: n231_p20_previous
+    applies_to: previous_cash_on_table
+    document: NBRK_231
+    clause: "п. 20"
+    text: "Ранее принятые деньги хранятся в запирающемся устройстве; деньги предыдущего клиента не остаются на столе."
+    text_status: paraphrase
+    conditions:
+      - "money lies on the desk"
+      - "a new client comes to the counter while that money is still there"
+    exceptions:
+      - "the money belongs to the current operation and is counted in front of the client"
+    tags: [client_arrives, object_cash, наличные, клиент]
+
+  - id: n231_p20_count
+    applies_to: counting_without_customer
+    document: NBRK_231
+    clause: "п. 20"
+    text: "Наличные принимаются и пересчитываются в присутствии клиента."
+    text_status: paraphrase
+    conditions:
+      - "the client has left the room"
+      - "after that the cashier counts or sorts banknotes"
+    exceptions:
+      - "counting cash from an encashment bag or from the safe with no client involved is normal"
+    tags: [client_leaves, object_cash, пересчёт, клиент]
+
+  - id: n231_p12_personal
+    applies_to: personal_items_cash_area
+    document: NBRK_231
+    clause: "п. 12"
+    text: "Личные вещи работников хранятся вне кассового узла (кроме лекарств и средств связи без фото/видео)."
+    text_status: paraphrase
+    conditions:
+      - "the object is a personal belonging (handbag, backpack, jacket, food, drink)"
+      - "it is on or right next to the cash desk"
+      - "it stays there, it is not just carried through"
+    exceptions:
+      - "a mobile phone on the desk or in the pocket is treated as normal in the clean videos"
+      - "cash devices, the laptop, documents and the desk phone are normal"
+      - "a cash collector's bag is not a personal item"
+    tags: [object_handbag, object_backpack, object_bag, object_cup, личные, вещи]
+
+  - id: n231_p24_collector
+    applies_to: collection_bag_not_inspected
+    document: NBRK_231
+    clause: "п. 24"
+    text: "При приёме ценностей от инкассаторов кассир проверяет сопроводительный документ, целостность сумки и пломбы."
+    text_status: paraphrase
+    conditions:
+      - "a cash collector hands over a bag or cash"
+      - "the cashier does not inspect the bag, the seal or the document"
+      - "the collector leaves right away"
+    exceptions:
+      - "the cashier turns the bag, looks at the seal and checks the document before the collector leaves"
+    tags: [collector, object_bag, инкассатор, пломба]
+
+  - id: n231_p80_bag
+    applies_to: collection_bag_unsecured
+    document: NBRK_231
+    clause: "п. 93 (косвенно: требования к инкассаторским сумкам)"
+    text: "Хранение ценностей должно исключать несанкционированный доступ; инкассаторская сумка не остаётся без присмотра."
+    text_status: paraphrase
+    conditions:
+      - "the object is a cash collection bag"
+      - "the collector has left and the cashier is away"
+      - "the bag lies on the desk, floor or chair, not in the safe"
+    exceptions:
+      - "the cashier opens the bag right away at the desk"
+    tags: [collector, cashier_leaves, object_bag, инкассатор, сумка]
+
+  - id: n14_p8_door
+    applies_to: service_door_left_open
+    document: NBRK_14
+    clause: "п. 8"
+    text: "Кассовый узел изолируется от других помещений и имеет один закрывающийся служебный вход."
+    text_status: paraphrase
+    conditions:
+      - "the door of the cash room is open"
+      - "it stays open while the cashier works"
+    exceptions:
+      - "the door is open only for a moment while a person walks through"
+    tags: [region_door, дверь, кассовый узел]
+
+  - id: n14_p8_entry
+    applies_to: unauthorized_cash_area_entry
+    document: NBRK_14
+    clause: "п. 8"
+    text: "Кассовый узел изолируется; посторонние не находятся на стороне кассира."
+    text_status: paraphrase
+    conditions:
+      - "a person other than the cashier is on the cashier's side of the counter"
+    exceptions:
+      - "a cash collector during a handover"
+    tags: [client_arrives, посторонний]
+
+  - id: none_terminal
+    applies_to: unlocked_bank_terminal
+    document: NONE
+    clause: "прямого пункта нет"
+    text: "Риск несанкционированного доступа к банковской программе (прямая норма не найдена)."
+    text_status: no_direct_clause
+    conditions:
+      - "the laptop is open with the screen on and a program visible"
+      - "the cashier leaves the workplace"
+      - "the screen is not locked while the cashier is away"
+    exceptions:
+      - "the cashier closes the lid or locks the screen before leaving"
+      - "switching the computer off is normal"
+    tags: [cashier_leaves, region_laptop, компьютер, экран]
+
+  - id: none_coffee
+    applies_to: coffee_over_cash
+    document: NONE
+    clause: "прямого пункта нет"
+    text: "Риск загрязнения и повреждения банкнот (прямая норма не найдена)."
+    text_status: no_direct_clause
+    conditions:
+      - "a cup or drink is on the desk or in the hand"
+      - "it is held directly above banknotes"
+    exceptions: []
+    tags: [object_cup, object_cash, кофе, чашка]
